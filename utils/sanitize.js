@@ -20,7 +20,23 @@ const sanitizeProfileInput = (input) => {
   };
 };
 
+const sanitizeTravelDetailsInput = (input) => {
+  return {
+    flight_number: escape(input.flight_number),
+    departure_city: escape(input.departure_city),
+    destination_city: escape(input.destination_city),
+    departure_date: new Date(input.departure_date),
+    destination_date: new Date(input.destination_date),
+    arrival_time: escape(input.arrival_time),
+    boarding_time: escape(input.boarding_time),
+    airline_name: escape(input.airline_name),
+    item_weight: input.item_weight,
+    userId
+  };
+};
+
 module.exports = {
   sanitizeInput,
-  sanitizeProfileInput
+  sanitizeProfileInput,
+  sanitizeTravelDetailsInput
 };

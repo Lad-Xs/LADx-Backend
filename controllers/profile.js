@@ -43,7 +43,9 @@ const GetUserProfile = async (req, res) => {
       profile: userProfile
     });
   } catch (err) {
-    await createAppLog(err.message);
+    await createAppLog(
+      `Error retrieving profile for user ID: ${id} - ${err.message}`
+    );
     res.status(500).json({
       status: 'E00',
       success: false,
@@ -54,23 +56,11 @@ const GetUserProfile = async (req, res) => {
 
 //Update Profile
 const UpdateProfile = async (req, res) => {
-  const id = req.id;
-
   try {
-    // fetch user info by id
-    const user = await User.findById(id);
-
-    if (!user) {
-      await createAppLog(`User not found - ID: ${userId}`);
-      return res.status(400).json({
-        status: 'E00',
-        success: false,
-        message: 'User profile not found!'
-      });
-    }
-
     // Validate incoming data
     const { error, value } = profileUpdateSchema.validate(req.body);
+
+    // Validation fails, error object contains the check failures
     if (error) {
       return res.status(400).json({
         status: 'E00',
@@ -81,7 +71,22 @@ const UpdateProfile = async (req, res) => {
     }
 
     // Sanitize validated input
+    // If validation succeeds, value contains the validated
+    // data from req.body.
     const sanitizedData = sanitizeProfileInput(value);
+
+    const id = req.id;
+    // fetch user info by id
+    const user = await User.findById(id);
+
+    if (!user) {
+      await createAppLog(`User not found - ID: ${id}`);
+      return res.status(400).json({
+        status: 'E00',
+        success: false,
+        message: 'User profile not found!'
+      });
+    }
 
     // Update user profile
     const updatedUser = await User.findByIdAndUpdate(

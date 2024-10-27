@@ -10,36 +10,8 @@ const Traveller = require('../models/traveller');
 const { createAppLog } = require('../utils/createLog');
 const { currentDate } = require('../utils/date');
 const { escape } = require('validator');
-const Joi = require('joi');
-
-// Validation schema using Joi
-const travelDetailsSchema = Joi.object({
-  flight_number: Joi.string().required().messages({
-    'any.required': 'Flight number is required'
-  }),
-  departure_city: Joi.string().required().messages({
-    'any.required': 'Departure city is required'
-  }),
-  destination_city: Joi.string().required().messages({
-    'any.required': 'Destination city is required'
-  }),
-  departure_date: Joi.date().required().messages({
-    'any.required': 'Departure date is required'
-  }),
-  destination_date: Joi.date().optional(),
-  arrival_time: Joi.string().required().messages({
-    'any.required': 'Arrival time is required'
-  }),
-  boarding_time: Joi.string().required().messages({
-    'any.required': 'Boarding time is required'
-  }),
-  airline_name: Joi.string().required().messages({
-    'any.required': 'Airline name is required'
-  }),
-  item_weight: Joi.number().required().messages({
-    'any.required': 'Item weight is required'
-  })
-});
+const { travelDetailsSchema } = require('../validators/travelDetailsValidator');
+const { sanitizeTravelDetailsInput } = require('../utils/sanitize');
 
 // POST: Upload travel details
 const TravelDetails = async (req, res) => {
@@ -70,18 +42,7 @@ const TravelDetails = async (req, res) => {
   }
 
   // Escape and sanitize fields
-  const sanitizedData = {
-    flight_number: escape(value.flight_number),
-    departure_city: escape(value.departure_city),
-    destination_city: escape(value.destination_city),
-    departure_date: new Date(value.departure_date),
-    destination_date: new Date(value.destination_date),
-    arrival_time: escape(value.arrival_time),
-    boarding_time: escape(value.boarding_time),
-    airline_name: escape(value.airline_name),
-    item_weight: value.item_weight,
-    userId
-  };
+  const sanitizedData = sanitizeTravelDetailsInput(value);
 
   try {
     const newTravelDetails = new Traveller(sanitizedData);
