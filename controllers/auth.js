@@ -146,16 +146,7 @@ const verifyOTP = async (req, res) => {
     otpStore.delete(`${email}_tempUser`);
 
     // Generate JWT token with the user payload
-    try {
-      token = generateToken({ email: user.email, id: user.id });
-    } catch (err) {
-      await createAppLog('Error generating token: ' + err.message);
-      return res.status(500).json({
-        status: 'E00',
-        success: false,
-        message: 'Failed to generate token.'
-      });
-    }
+    const token = generateToken({ email: user.email, id: user.id });
 
     await createAppLog(
       JSON.stringify('OTP verified successfully. User account created.')
@@ -173,7 +164,13 @@ const verifyOTP = async (req, res) => {
       });
   } catch (error) {
     createAppLog(JSON.stringify({ Error: error.message }));
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res
+      .status(500)
+      .json({
+        status: 'E00',
+        success: false,
+        message: 'Internal Server Error:' + error.message
+      });
   }
 };
 
