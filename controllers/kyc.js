@@ -12,7 +12,7 @@ const LogFile = require('../models/LogFile');
 const Kyc = require('../models/kyc');
 const { createAppLog } = require('../utils/createLog');
 const { currentDate } = require('../utils/date');
-const { escape } = require('validator');
+const { body, validationResult } = require('express-validator');
 
 // Configure Cloudinary storage for Multer
 const storage = new CloudinaryStorage({
@@ -27,32 +27,38 @@ const storage = new CloudinaryStorage({
 
 const identityUpload = multer({ storage: storage });
 
+// Validation and sanitization middleware
+const validateKYC = [
+  body('residential_address')
+    .trim()
+    .notEmpty()
+    .withMessage('Residential address is required')
+    .escape(),
+  body('work_address')
+    .trim()
+    .notEmpty()
+    .withMessage('Work address is required')
+    .escape()
+];
+
 // POST: Create identity
 const UploadKYC = async (req, res) => {
   // Get user ID from an authenticated token
   const userId = req.id;
   const identity = req.file; // Get uploaded file from multer
 
+  // Validate and handle errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ status: 'E00', errors: errors.array() });
+  }
+
+  if (!userId)
+    return res.status(400).json({ message: 'User ID is required for KYC.' });
+
   try {
     // Get request body
     let { residential_address, work_address } = req.body;
-
-    // Escape and sanitize inputs
-    residential_address = escape(residential_address);
-    work_address = escape(work_address);
-
-    // Input validation
-    if (!residential_address)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Residential address is required' });
-    if (!work_address)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Work address is required' });
-
-    if (!userId)
-      return res.status(400).json({ message: 'User ID is required for KYC.' });
 
     const kycDetails = {
       residential_address,
@@ -91,5 +97,6 @@ const UploadKYC = async (req, res) => {
 
 module.exports = {
   UploadKYC,
-  identityUpload
+  identityUpload,
+  validateKYC
 };

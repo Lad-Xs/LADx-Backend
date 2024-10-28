@@ -1,6 +1,5 @@
 const express = require('express');
 const csrf = require('csurf');
-const router = express.Router();
 const { Login, SignUp, verifyOTP, Logout } = require('../controllers/auth');
 const { UpdateProfilePhoto, upload } = require('../controllers/profilePhoto');
 const { UpdateProfile, GetUserProfile } = require('../controllers/profile');
@@ -10,11 +9,14 @@ const {
   ResetPassword
 } = require('../controllers/forgotPassword');
 const { GetProfilePhoto } = require('../controllers/getProfilePhoto');
-const { UploadKYC, identityUpload } = require('../controllers/kyc');
+const {
+  UploadKYC,
+  identityUpload,
+  validateKYC
+} = require('../controllers/kyc');
 const {
   TravelDetails,
-  UpdateTravelDetails,
-  travelUpload
+  UpdateTravelDetails
 } = require('../controllers/traveller');
 const {
   RequestDetails,
@@ -23,6 +25,8 @@ const {
 } = require('../controllers/sender');
 const { uploadErrorHandler } = require('../utils/multerError');
 const { validateUserSignup } = require('../validators/userValidtor');
+
+const router = express.Router();
 
 // Middleware for CSRF protection
 const csrfProtection = csrf({
@@ -81,6 +85,7 @@ router.post(
   verifyTokenFromCookie,
   identityUpload.single('identity'),
   uploadErrorHandler,
+  validateKYC,
   UploadKYC
 );
 
