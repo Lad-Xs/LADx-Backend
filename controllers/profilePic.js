@@ -118,21 +118,21 @@ const UpdateProfilePhoto = async (req, res) => {
     await User.findByIdAndUpdate(id, { $set: profilePhoto });
 
     // Log Profile Photo Update activity
-    const logProfilePhotoUpdate = new LogFile({
+    const logUpdate = new LogFile({
       email: user.email,
       fullname: user.fullname,
       ActivityName: `Profile Photo updated by user: ${user.fullname}`,
       AddedOn: currentDate
     });
 
-    await logProfilePhotoUpdate.save();
+    await logUpdate.save();
 
     await createAppLog('Profile Photo Updated Successfully!');
     return res.status(200).json({
       status: '00',
       success: true,
       message: 'Profile Photo Updated Successfully!',
-      data: userProfile
+      data: profilePhoto
     });
   } catch (err) {
     await createAppLog(err.message);

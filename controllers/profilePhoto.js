@@ -45,9 +45,9 @@ const UpdateProfilePhoto = async (req, res) => {
     const profilePhoto = {};
 
     // Get the new cloudinary image URL
-    profilePhoto.profilePicUrl = req.file.path; // Cloudinary URL
+    profilePhoto.profilePicUrl = profilePic.path; // Cloudinary URL
     // Get the publicId
-    profilePhoto.profilePicPublicId = req.file.filename; // Cloudinary publicId
+    profilePhoto.profilePicPublicId = profilePic.filename; // Cloudinary publicId
 
     // Update user profile photo in database
     const user = await User.findByIdAndUpdate(id, { $set: profilePhoto });

@@ -110,11 +110,11 @@ const RequestDetails = async (req, res) => {
     await newRequestDetails.save();
     await createAppLog('Request details saved Successfully!');
 
-    const logRequestDetails = new LogFile({
+    const logEntry = new LogFile({
       ActivityName: `Request details uploaded by user ${userId}`,
       AddedOn: currentDate
     });
-    await logRequestDetails.save();
+    await logEntry.save();
 
     createAppLog('Request details saved Successfully!');
     return res.status(200).json({
@@ -197,12 +197,12 @@ const UpdateRequestDetails = async (req, res) => {
     }
 
     // Find the existing request details
-    // const existingRequestDetails = await Sender.findOne({ userId });
+    const existingRequestDetails = await Sender.findOne({ userId });
 
     // Update the request details in the database
-    // const id = existingRequestDetails.id;
-    const updatedRequestDetails = await Sender.findOneAndUpdate(
-      { userId },
+    const id = existingRequestDetails.id;
+    const updatedRequestDetails = await Sender.findByIdAndUpdate(
+      id,
       { $set: requestDetails },
       { new: true }
     );
@@ -211,7 +211,7 @@ const UpdateRequestDetails = async (req, res) => {
       return res.status(404).json({
         status: 'E00',
         success: false,
-        message: `Request details with user ID ${userId} not found.`
+        message: `Request details with ID ${id} not found.`
       });
     }
 

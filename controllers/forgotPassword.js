@@ -16,7 +16,7 @@ const {
 const { createAppLog } = require('../utils/createLog');
 const { encryptPasswordWithBcrypt } = require('../utils/passwordEncrypt');
 
-// POST: Request Password Reset
+// @POST: Request Password Reset
 const ForgotPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -96,7 +96,11 @@ const ResetPassword = async (req, res) => {
     res.status(200).json({ message: 'Password reset successful!' });
   } catch (error) {
     await createAppLog({ message: error.message });
-    res.status(500).json({ message: 'Server error, please try again later.' });
+    res.status(500).json({
+      status: 'E00',
+      success: false,
+      message: 'Server error, please try again later: ' + error.message
+    });
   }
 };
 

@@ -96,7 +96,7 @@ const UpdateProfile = async (req, res) => {
     );
 
     // Log Profile Update activity
-    await createAppLog(`Profile Updated for user ID: ${userId}`);
+    await createAppLog(`Profile Updated for user ID: ${id}`);
     const logUpdate = new LogFile({
       fullname: updatedUser.fullname,
       email: updatedUser.email,
@@ -114,7 +114,7 @@ const UpdateProfile = async (req, res) => {
     });
   } catch (err) {
     await createAppLog(
-      `Error updating profile for user ID: ${userId} - ${err.message}`
+      `Error updating profile for user ID: ${id} - ${err.message}`
     );
     res.status(500).json({
       status: 'E00',
