@@ -141,20 +141,20 @@ if (process.env.NODE_ENV === 'production') {
 const PORT = process.env.PORT || 1337;
 
 // Path to SSL key and certificate files
-const privatekey = fs.readFileSync(
-  path.join(__dirname, 'SSL', 'privatekey.pem')
-);
-const certificate = fs.readFileSync(
-  path.join(__dirname, 'SSL', 'certificate.pem')
-);
+// const privatekey = fs.readFileSync(
+//   path.join(__dirname, 'SSL', 'privatekey.pem')
+// );
+// const certificate = fs.readFileSync(
+//   path.join(__dirname, 'SSL', 'certificate.pem')
+// );
 
-const credentials = {
-  key: privatekey,
-  cert: certificate
-};
+// const credentials = {
+//   key: privatekey,
+//   cert: certificate
+// };
 
 // Start the HTTPS server
-const httpsServer = https.createServer(credentials, app, (req, res) => {
+const httpsServer = https.createServer(app, (req, res) => {
   res.writeHead(200);
   res.setHeader('Content-Type', 'application/javascript');
 });
