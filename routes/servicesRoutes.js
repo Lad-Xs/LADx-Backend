@@ -37,14 +37,9 @@ const csrfProtection = csrf({
   }
 });
 
-// Apply CSRF protection globally but exclude specific routes
-// router.use((req, res, next) => {
-//   if (req.method === 'GET' || req.path === '/login' || req.path === '/logout') {
-//     return next(); // Skip CSRF protection for these routes
-//   }
-
-//   csrfProtection(req, res, next); // Apply CSRF protection
-// });
+router.get('/csrf-token', csrfProtection, (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
 
 router.post('/signup', validateUserSignup, SignUp);
 router.post('/verify-otp', verifyOTP);
@@ -76,6 +71,7 @@ router.put(
   '/users/profile',
   verifyTokenFromCookie,
   upload.none(),
+  csrfProtection,
   UpdateProfile
 );
 

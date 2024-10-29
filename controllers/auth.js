@@ -60,7 +60,7 @@ const SignUp = async (req, res, next) => {
     req.session.tempUser = tempUser;
 
     // Optionally send OTP via email
-    // await sendOTPEmail(email, otp);
+    await sendOTPEmail(email, otp);
 
     return res.status(200).json({
       status: '00',
@@ -164,13 +164,11 @@ const verifyOTP = async (req, res) => {
       });
   } catch (error) {
     createAppLog(JSON.stringify({ Error: error.message }));
-    return res
-      .status(500)
-      .json({
-        status: 'E00',
-        success: false,
-        message: 'Internal Server Error:' + error.message
-      });
+    return res.status(500).json({
+      status: 'E00',
+      success: false,
+      message: 'Internal Server Error:' + error.message
+    });
   }
 };
 
