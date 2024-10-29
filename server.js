@@ -32,7 +32,7 @@ app.use(helmet());
 
 app.use(
   helmet({
-    contentTypeOptions: false // Disables 'X-Content-Type-Options: nosniff'
+    xcontentTypeOptions: false // Disables 'X-Content-Type-Options: nosniff'
   })
 );
 
@@ -79,7 +79,7 @@ const resetLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // Limit each IP to 5 requests per window
   message:
-    'Too many password reset requests from this IP, please try again after 15 minutes.'
+    'Too many password reset requests, please try again after 15 minutes.'
 });
 
 // Apply rate limit to password reset
@@ -104,10 +104,8 @@ const servicesRoutes = require('./routes/servicesRoutes');
 
 // Middleware to parse the request body as JSON data
 app.use(express.json());
-
 //For parsing application/x-www-form-urlencoded data
 app.use(express.urlencoded({ extended: true }));
-
 // Serve static files from the 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
 
